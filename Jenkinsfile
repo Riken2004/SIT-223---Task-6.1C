@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                  sh 'mvn clean package'
             }
         }
         stage('Unit and Integration Tests') {
