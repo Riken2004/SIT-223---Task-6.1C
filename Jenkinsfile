@@ -7,7 +7,7 @@ pipeline {
         AWS_REGION = 'us-east-1'
         STAGING_SERVER = 'staging-server-address'
         PRODUCTION_SERVER = 'production-server-address'
-        EMAIL_RECIPIENT = 'your-email@example.com'
+        EMAIL_RECIPIENT = 'patelriken2004@gmail.com'
     }
 
     stages {
@@ -84,19 +84,19 @@ pipeline {
 
     post {
         success {
-            emailext to: "${EMAIL_RECIPIENT}",
+            emailext to:  'patelriken2004@gmail.com',
                      subject: "Build Success: ${env.JOB_NAME}",
                      body: "The build was successful. Check the details in Jenkins.",
                      attachmentsPattern: '**/target/*.jar'
         }
         failure {
-            emailext to: "${EMAIL_RECIPIENT}",
+            emailext to: 'patelriken2004@gmail.com',
                      subject: "Build Failed: ${env.JOB_NAME}",
                      body: "The build failed. Please check the logs for details.",
                      attachmentsPattern: '**/target/*.jar'
         }
         unstable {
-            emailext to: "${EMAIL_RECIPIENT}",
+            emailext to: 'patelriken2004@gmail.com',
                      subject: "Build Unstable: ${env.JOB_NAME}",
                      body: "The build is unstable. Please review the details.",
                      attachmentsPattern: '**/target/*.jar'
