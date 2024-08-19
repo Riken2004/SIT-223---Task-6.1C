@@ -1,106 +1,101 @@
 pipeline {
     agent any
-
+    
     environment {
-        // Define any environment variables here
-        MAVEN_HOME = '/usr/local/maven'
-        AWS_REGION = 'us-east-1'
-        STAGING_SERVER = 'staging-server-address'
-        PRODUCTION_SERVER = 'production-server-address'
-        EMAIL_RECIPIENT = 'patelriken2004@gmail.com'
+        MAVEN_HOME = 'C:\\Users\\Riken patel\\apache-maven-3.8.8-bin' // Adjust path to your Maven installation
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-11.0.11' // Adjust path to your Java installation
     }
-
+    
     stages {
+        stage('Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+        
         stage('Build') {
             steps {
                 script {
-                    // Build the code using Maven
-                    echo 'Building the code...'
-                    sh '${MAVEN_HOME}/bin/mvn clean package'
+                    echo "Building the code..."
+                    bat "${MAVEN_HOME}\\bin\\mvn clean install"
                 }
             }
         }
-
+        
         stage('Unit and Integration Tests') {
             steps {
                 script {
-                    // Run unit tests and integration tests
-                    echo 'Running unit and integration tests...'
-                    sh '${MAVEN_HOME}/bin/mvn test'
+                    echo "Running Unit and Integration Tests..."
+                    bat "${MAVEN_HOME}\\bin\\mvn test"
                 }
             }
         }
-
+        
         stage('Code Analysis') {
             steps {
                 script {
-                    // Perform code analysis using SonarQube
-                    echo 'Analyzing code with SonarQube...'
-                    sh 'sonar-scanner'
+                    echo "Performing Code Analysis..."
+                    // Example: Using SonarQube for code analysis
+                    // Replace with your actual command for code analysis
+                    bat "${MAVEN_HOME}\\bin\\mvn sonar:sonar"
                 }
             }
         }
-
+        
         stage('Security Scan') {
             steps {
                 script {
-                    // Perform security scan using OWASP Dependency-Check
-                    echo 'Scanning for security vulnerabilities...'
-                    sh 'dependency-check --project YourProject --scan . --format HTML --out dependency-check-report.html'
+                    echo "Performing Security Scan..."
+                    // Example: Using OWASP Dependency Check for security scan
+                    // Replace with your actual command for security scanning
+                    bat "dependency-check.bat --project JenkinsPipeline --scan ."
                 }
             }
         }
-
+        
         stage('Deploy to Staging') {
             steps {
                 script {
-                    // Deploy the application to a staging server using AWS CLI
-                    echo 'Deploying to staging server...'
-                    sh 'aws deploy create-deployment --application-name YourApp --deployment-group-name YourStagingGroup --s3-location bucket=your-bucket,key=your-key,bundleType=zip --region ${AWS_REGION}'
+                    echo "Deploying to Staging..."
+                    // Example: Deploying using a custom deployment script
+                    // Replace with your actual deployment command
+                    bat "deploy.bat staging"
                 }
             }
         }
-
+        
         stage('Integration Tests on Staging') {
             steps {
                 script {
-                    // Run integration tests on the staging environment
-                    echo 'Running integration tests on staging...'
-                    sh '${MAVEN_HOME}/bin/mvn verify'
+                    echo "Running Integration Tests on Staging..."
+                    // Replace with your actual commands to run tests on the staging environment
+                    bat "run-staging-tests.bat"
                 }
             }
         }
-
+        
         stage('Deploy to Production') {
             steps {
                 script {
-                    // Deploy the application to production server using AWS CLI
-                    echo 'Deploying to production server...'
-                    sh 'aws deploy create-deployment --application-name YourApp --deployment-group-name YourProductionGroup --s3-location bucket=your-bucket,key=your-key,bundleType=zip --region ${AWS_REGION}'
+                    echo "Deploying to Production..."
+                    // Example: Deploying to production using a custom deployment script
+                    // Replace with your actual production deployment command
+                    bat "deploy.bat production"
                 }
             }
         }
     }
-
+    
     post {
-        success {
-            emailext to:  'patelriken2004@gmail.com',
-                     subject: "Build Success: ${env.JOB_NAME}",
-                     body: "The build was successful. Check the details in Jenkins.",
-                     attachmentsPattern: '**/target/*.jar'
-        }
-        failure {
-            emailext to: 'patelriken2004@gmail.com',
-                     subject: "Build Failed: ${env.JOB_NAME}",
-                     body: "The build failed. Please check the logs for details.",
-                     attachmentsPattern: '**/target/*.jar'
-        }
-        unstable {
-            emailext to: 'patelriken2004@gmail.com',
-                     subject: "Build Unstable: ${env.JOB_NAME}",
-                     body: "The build is unstable. Please review the details.",
-                     attachmentsPattern: '**/target/*.jar'
+        always {
+            emailext (
+                subject: "Jenkins Pipeline Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+                body: """Build #${BUILD_NUMBER} has finished with status: ${currentBuild.currentResult}
+                         Check console output at ${BUILD_URL} to view the results.""",
+                to: 'patelriken2004@gmail.com'
+            )
         }
     }
 }
+
 
