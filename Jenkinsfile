@@ -2,81 +2,48 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = 'C:\\Program Files\\apache-maven-3.9.9'
-        JAVA_HOME = 'C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.exe'
-        PATH = "${env.MAVEN_HOME}\\bin;${env.JAVA_HOME}\\bin;${env.PATH}"
+        DIRECTORY_PATH = '/path/to/your/code'
+        TESTING_ENVIRONMENT = 'testing-env'
+        PRODUCTION_ENVIRONMENT = 'Riken'
     }
 
     stages {
-        stage('Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build') {
             steps {
-                script {
-                    echo "Building the code..."
-                    bat "${env.MAVEN_HOME}\\bin\\mvn clean install"
-                }
+                echo "fetch the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
+                echo "compile the code and generate any necessary artifacts"
             }
         }
-
-        stage('Unit and Integration Tests') {
+        stage('Test') {
             steps {
-                script {
-                    echo "Running Unit and Integration Tests..."
-                    bat "${env.MAVEN_HOME}\\bin\\mvn test"
-                }
+                echo 'unit tests'
+                echo 'integration tests'
             }
         }
-
-        stage('Code Analysis') {
+        stage('Code Quality Check') {
             steps {
-                script {
-                    echo "Performing Code Analysis with SpotBugs..."
-                    bat "${env.MAVEN_HOME}\\bin\\mvn spotbugs:check"
-                }
+                echo 'check the quality of the code'
             }
         }
-
-        stage('Security Scan') {
+        stage('Deploy') {
             steps {
-                script {
-                    echo "Performing Security Scan with OWASP Dependency Check..."
-                    bat "${env.MAVEN_HOME}\\bin\\mvn org.owasp:dependency-check-maven:check"
-                }
+                echo "deploy the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
             }
         }
-
-        stage('Deploy to Staging') {
+        stage('Approval') {
             steps {
-                script {
-                    echo "Deploying to Staging..."
-                    bat "deploy-staging.bat"
-                }
+                echo 'Waiting for manual approval...'
+                sleep(time: 10, unit: 'SECONDS')
             }
         }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                script {
-                    echo "Running Integration Tests on Staging..."
-                    bat "run-staging-tests.bat"
-                }
-            }
-        }
-
         stage('Deploy to Production') {
             steps {
-                script {
-                    echo "Deploying to Production..."
-                    bat "deploy-production.bat"
-                }
+                echo "deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
             }
         }
     }
+}
+
 
     post {
         always {
