@@ -54,7 +54,7 @@ pipeline {
                 success {
                     emailext (
                         attachLog: true,
-                        to: 'patelriken2004@gmail.com',
+                        to: 'rickeypatel2004@gmail.com',
                         subject: 'Security Scan Test: Successful',
                         body: 'Stage 4 successfully implemented. Refer to the report.'
                     )
