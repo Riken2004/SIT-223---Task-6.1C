@@ -20,7 +20,7 @@ pipeline {
                     success {
                         emailext(
                             attachLog: true,
-                            to: 'patelriken2004@gmail.com',
+                            to: 'rickeypatel2004@gmail.com',
                             subject: 'Unit and Integration Test: Successful',
                             body: 'Stage 2 successfully implemented. Refer to the report.'
                         )
@@ -28,7 +28,7 @@ pipeline {
                     failure {
                         emailext(
                             attachLog: true,
-                            to: 'patelriken2004@gmail.com',
+                            to: 'rickeypatel2004@gmail.com',
                             subject: 'Unit and Integration Test: Failure',
                             body: 'Stage 2 unsuccessfully implemented. Refer to the report.'
                         )
@@ -62,7 +62,7 @@ pipeline {
                 failure {
                     emailext(
                         attachLog: true,
-                        to: 'patelriken2004@gmail.com',
+                        to: 'rickeypatel2004@gmail.com',
                         subject: 'Security Scan Test: Failure',
                         body: 'Stage 4 unsuccessfully implemented. Refer to the report.'
                     )
